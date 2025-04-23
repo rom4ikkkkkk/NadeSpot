@@ -11,3 +11,14 @@ function cardanimation() {
 }
 cardanimation();
 window.addEventListener("resize", cardanimation);
+
+function resetAnimations() {
+  const mapCards = document.querySelectorAll('.map-card');
+  mapCards.forEach(card => {
+      card.classList.remove('active'); // Сброс класса active
+      card.style.transform = ''; // Сброс трансформации
+  });
+}
+
+// Добавьте вызов функции resetAnimations при возвращении на главную страницу
+window.addEventListener('load', resetAnimations);
