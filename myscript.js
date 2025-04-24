@@ -22,3 +22,11 @@ function resetAnimations() {
 
 // Добавьте вызов функции resetAnimations при возвращении на главную страницу
 window.addEventListener('load', resetAnimations);
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js")
+        .then(reg => console.log("ServiceWorker зарегистрирован!"))
+        .catch(err => console.log("Ошибка: ", err));
+    });
+  }

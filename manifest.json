@@ -1,0 +1,21 @@
+{
+  "name": "NadeSpot",
+  "short_name": "NadeSpot",
+  "description": "Раскидки гранат в CS2",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1b183a",
+  "theme_color": "#1b183a",
+  "icons": [
+    {
+      "src": "img/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
