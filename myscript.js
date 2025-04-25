@@ -23,13 +23,13 @@ function resetAnimations() {
 // Добавьте вызов функции resetAnimations при возвращении на главную страницу
 window.addEventListener('load', resetAnimations);
 
- /*window.addEventListener('load', () => {
+ window.addEventListener('load', () => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
       .then(() => console.log("✅ Service Worker зарегистрирован"))
       .catch(err => console.error("❌ Ошибка регистрации SW:", err));
   }
-});*/
+});
 
 // установка прилож
 let deferredPrompt = null;
