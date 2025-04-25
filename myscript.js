@@ -32,47 +32,99 @@ window.addEventListener('load', resetAnimations);
 });
 
 // установка прилож
-let deferredPrompt = null;
+let deferredPrompt;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+}
 
-  const wasBannerShown = localStorage.getItem('pwaInstallPromptShown');
-  if (wasBannerShown) return;
+function isInStandaloneMode() {
+  return ('standalone' in window.navigator) && window.navigator.standalone;
+}
 
+window.addEventListener('load', () => {
   const banner = document.getElementById('installBanner');
   const overlay = document.getElementById('installOverlay');
   const closeBtn = document.getElementById('closeBanner');
+  const installBtn = document.getElementById('installAppBtnBanner');
+  const installBtnFooter = document.getElementById('installAppBtnFooter');
 
-  banner?.classList.add('show');
-  overlay?.classList.add('show');
-  document.body.classList.add('noscroll');
+  // iOS: показать инструкцию, скрыть кнопки
+  if (isIOS() && !isInStandaloneMode()) {
+    if (!localStorage.getItem('pwaInstallPromptShown')) {
+      banner.querySelector('p').innerHTML =
+        'На устройствах Apple установка вручную:<br>Нажмите Поделиться → На экран «Домой».';
+      installBtn.style.display = 'none';
+      installBtnFooter.style.display = 'none';
 
-  localStorage.setItem('pwaInstallPromptShown', 'true');
+      banner.classList.add('show');
+      overlay.classList.add('show');
+      document.body.classList.add('noscroll');
+      localStorage.setItem('pwaInstallPromptShown', 'true');
 
-  closeBtn?.addEventListener('click', () => {
-    banner.classList.remove('show');
-    overlay.classList.remove('show');
-    document.body.classList.remove('noscroll');
+      closeBtn.addEventListener('click', () => {
+        banner.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.classList.remove('noscroll');
+      });
+    }
+    return;
+  }
+
+  // Android / Desktop: ловим событие установки
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Показываем баннер только один раз
+    if (!localStorage.getItem('pwaInstallPromptShown')) {
+      banner.classList.add('show');
+      overlay.classList.add('show');
+      document.body.classList.add('noscroll');
+      localStorage.setItem('pwaInstallPromptShown', 'true');
+    }
+
+    // Кнопка в баннере
+    installBtn.addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+      }
+    });
+
+    // Кнопка снизу работает всегда
+    installBtnFooter.addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+      } else {
+        alert("Установка недоступна. Попробуйте позже.");
+      }
+    });
+
+    closeBtn.addEventListener('click', () => {
+      banner.classList.remove('show');
+      overlay.classList.remove('show');
+      document.body.classList.remove('noscroll');
+    });
   });
 });
 
-// Универсальная установка (для обеих кнопок)
-function handleInstallClick() {
-  if (!deferredPrompt) return;
-
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then((choice) => {
-    console.log(choice.outcome === 'accepted' ? '✅ Установлено' : '❌ Отказ');
-    deferredPrompt = null;
-
-    document.getElementById('installBanner')?.classList.remove('show');
-    document.getElementById('installOverlay')?.classList.remove('show');
-    document.body.classList.remove('noscroll');
-  });
+//проверка на пва если уст то не показ кнопка
+function isStandaloneMode() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true;
 }
 
-// Обработчики кнопок
-document.getElementById('installAppBtnBanner')?.addEventListener('click', handleInstallClick);
-document.getElementById('installAppBtnFooter')?.addEventListener('click', handleInstallClick);
+// Убираем кнопку и баннер, если уже в PWA
+if (isStandaloneMode()) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const bannerBtn = document.getElementById('installAppBtnBanner');
+    const footerBtn = document.getElementById('installAppBtnFooter');
+    const overlay = document.getElementById('installOverlay');
+    const banner = document.getElementById('installBanner');
+
+    if (bannerBtn) bannerBtn.style.display = 'none';
+    if (footerBtn) footerBtn.style.display = 'none';
+    if (overlay) overlay.remove();
+    if (banner) banner.remove();
+  });
+}
