@@ -23,13 +23,13 @@ function resetAnimations() {
 // Добавьте вызов функции resetAnimations при возвращении на главную страницу
 window.addEventListener('load', resetAnimations);
 
- window.addEventListener('load', () => {
+ /*window.addEventListener('load', () => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
       .then(() => console.log("✅ Service Worker зарегистрирован"))
       .catch(err => console.error("❌ Ошибка регистрации SW:", err));
   }
-});
+}); */
 
 // установка прилож
 let deferredPrompt;
@@ -49,13 +49,13 @@ window.addEventListener('load', () => {
   const installBtn = document.getElementById('installAppBtnBanner');
   const installBtnFooter = document.getElementById('installAppBtnFooter');
 
-  // iOS: показать инструкцию, скрыть кнопки
+  // Для айфона
   if (isIOS() && !isInStandaloneMode()) {
     if (!localStorage.getItem('pwaInstallPromptShown')) {
       banner.querySelector('p').innerHTML =
-        'На устройствах Apple установка вручную:<br>Нажмите Поделиться → На экран «Домой».';
-      installBtn.style.display = 'none';
-      installBtnFooter.style.display = 'none';
+        'А ты знал, что у нас есть приложение? :<br>Нажми Поделиться → На экран «Домой» и стань ближе к PRO-игроку!';
+      installBtn.style.display = 'none'; 
+      installBtnFooter.style.display = 'none'; 
 
       banner.classList.add('show');
       overlay.classList.add('show');
@@ -68,36 +68,40 @@ window.addEventListener('load', () => {
         document.body.classList.remove('noscroll');
       });
     }
-    return;
+    return; 
   }
 
-  // Android / Desktop: ловим событие установки
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
-    // Показываем баннер только один раз
-    if (!localStorage.getItem('pwaInstallPromptShown')) {
-      banner.classList.add('show');
-      overlay.classList.add('show');
-      document.body.classList.add('noscroll');
-      localStorage.setItem('pwaInstallPromptShown', 'true');
-    }
+    if (localStorage.getItem('pwaInstallPromptShown')) return;
 
-    // Кнопка в баннере
+    banner.classList.add('show');
+    overlay.classList.add('show');
+    document.body.classList.add('noscroll');
+    localStorage.setItem('pwaInstallPromptShown', 'true');
+
+  
     installBtn.addEventListener('click', () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice) => {
+        deferredPrompt = null;
+        banner.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.classList.remove('noscroll');
+      });
     });
 
-    // Кнопка снизу работает всегда
+   
     installBtnFooter.addEventListener('click', () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-      } else {
-        alert("Установка недоступна. Попробуйте позже.");
-      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice) => {
+        deferredPrompt = null;
+        banner.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.classList.remove('noscroll');
+      });
     });
 
     closeBtn.addEventListener('click', () => {
@@ -107,24 +111,3 @@ window.addEventListener('load', () => {
     });
   });
 });
-
-//проверка на пва если уст то не показ кнопка
-function isStandaloneMode() {
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         window.navigator.standalone === true;
-}
-
-// Убираем кнопку и баннер, если уже в PWA
-if (isStandaloneMode()) {
-  document.addEventListener('DOMContentLoaded', () => {
-    const bannerBtn = document.getElementById('installAppBtnBanner');
-    const footerBtn = document.getElementById('installAppBtnFooter');
-    const overlay = document.getElementById('installOverlay');
-    const banner = document.getElementById('installBanner');
-
-    if (bannerBtn) bannerBtn.style.display = 'none';
-    if (footerBtn) footerBtn.style.display = 'none';
-    if (overlay) overlay.remove();
-    if (banner) banner.remove();
-  });
-}

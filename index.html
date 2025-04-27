@@ -2,7 +2,7 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NadeSpot</title>
     <link rel="icon" href="img/icons/icon-192x192.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,24 +60,14 @@
         </div>
       </section>
 
-      <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-          <img src="img/icons/mapicon.png" alt="Карты">
-          <span>Карты</span>
-        </a>
-        <button class="nav-item" onclick="toggleChat(true)">
-          <img src="img/icons/goodtoknow.png" alt="Гайды">
-          <span>Полезное</span>
-        </button>
-        <a href="favorites.html" class="nav-item">
-          <img src="img/icons/fav.png" alt="Избранное">
-          <span>Избранное</span>
-        </a>
-        <a href="settings.html" class="nav-item">
-          <img src="img/icons/settings.png" alt="Настройки">
-          <span>Настройки</span>
-        </a>
-      </nav>
+<footer class="bottom-header">
+  <a href="index.html" class="icon">
+    <img src="img/icons/mapicon.png" alt="Карта"/>
+  </a>
+  <button class="icon" onclick="toggleChat(true)">
+    <img src="img/icons/goodtoknow.png" alt="Полезно"/>
+  </button>
+</footer>
 <!-- Красивая кнопка внизу -->
 <!-- Баннер установки -->
 <div id="installOverlay"></div>
