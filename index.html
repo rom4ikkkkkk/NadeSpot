@@ -13,6 +13,7 @@
   </head>
 
   <body>
+    
     <header>
       <a class="logo">
         <img src="img\icons\nadespot.png" alt="NadeSpot Logo">
@@ -59,17 +60,27 @@
           </div>
         </div>
       </section>
-
+<div id="chat-modal" class="chat-modal">
+  <div class="chat-overlay" onclick="toggleChat(false)"></div>
+  <div class="chat-box">
+    <button class="chat-close" onclick="toggleChat(false)">✕</button>
+    <h2>Спроси Чичу-бомбоносца!</h2>
+    <div id="chat-output" class="chat-output"></div>
+    <div class="chat-input-row">
+      <input type="text" id="user-input" placeholder="Задайте вопрос про CS 2…" />
+      <button id="send-btn">Отправить</button>
+    </div>
+  </div>
+</div>
 <footer class="bottom-header">
   <a href="index.html" class="icon">
     <img src="img/icons/mapicon.png" alt="Карта"/>
   </a>
-  <button class="icon" onclick="toggleChat(true)">
+  <a class="icon" onclick="toggleChat(true)">
     <img src="img/icons/goodtoknow.png" alt="Полезно"/>
-  </button>
+  </a>  
 </footer>
-<!-- Красивая кнопка внизу -->
-<!-- Баннер установки -->
+
 <div id="installOverlay"></div>
 <div id="installBanner">
   <button id="closeBanner">×</button>
@@ -85,6 +96,8 @@
     <span>Установить приложение</span>
   </div>
 </div>
+
+
 
 <script src="myscript.js"></script>
   </body>

@@ -111,3 +111,117 @@ window.addEventListener('load', () => {
     });
   });
 });
+
+// Функция открытия и закрытия окна чата
+function toggleChat(open) {
+  const chatModal = document.getElementById('chat-modal');
+  const chatOutput = document.getElementById('chat-output');
+
+  if (open) {
+    chatModal.style.display = 'block';
+    document.body.classList.add('noscroll');
+
+    // Очищаем старые сообщения
+    chatOutput.innerHTML = '';
+
+    // Добавляем приветственное сообщение
+    const welcomeMessage = document.createElement('div');
+    welcomeMessage.className = 'message bot-message';
+    welcomeMessage.innerHTML = `
+      <img src="bot.png" class="message-icon" alt="Bot Icon">
+      <div class="message-text">Салам алейкум, чем тебе помочь?</div>
+    `;
+    chatOutput.appendChild(welcomeMessage);
+
+    // Прокручиваем вниз
+    chatOutput.scrollTop = chatOutput.scrollHeight;
+
+  } else {
+    chatModal.style.display = 'none';
+    document.body.classList.remove('noscroll');
+  }
+}
+
+
+async function sendToYandexGPT(prompt) {
+  const proxyUrl = 'https://yandex-gpt-proxy-production.up.railway.app/api/yandexgpt';
+
+  try {
+    const response = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ prompt: prompt })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.text; // Возвращаем текст ответа
+    } else {
+      return 'Произошла ошибка при обращении к прокси.';
+    }
+  } catch (error) {
+    return 'Произошла ошибка при отправке запроса.';
+  }
+}
+
+// Пример использования:
+function toggleChat(open) {
+  const chatModal = document.getElementById('chat-modal');
+  if (open) {
+    chatModal.style.display = 'block';
+  } else {
+    chatModal.style.display = 'none';
+  }
+}
+
+// Пример обработчика кнопки отправки сообщения
+document.getElementById('send-btn').addEventListener('click', async () => {
+  const userInput = document.getElementById('user-input').value;
+  if (userInput.trim() !== '') {
+    const chatOutput = document.getElementById('chat-output');
+
+    // Добавляем сообщение пользователя с иконкой
+    chatOutput.innerHTML += `
+      <div class="message user-message">
+        <img src="man.png" class="message-icon" alt="User Icon">
+        <div class="message-text">${userInput}</div>
+      </div>
+    `;
+
+    // Добавляем индикатор "Чат-бот печатает..." с иконкой
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'message bot-message';
+    typingIndicator.innerHTML = `
+      <img src="bot.png" class="message-icon" alt="Bot Icon">
+      <div class="message-text">Чат-бот печатает...</div>
+    `;
+    chatOutput.appendChild(typingIndicator);
+
+    // Прокрутить вниз
+    chatOutput.scrollTop = chatOutput.scrollHeight;
+
+    // Ждём ответа от ЯндексГПТ
+    const response = await sendToYandexGPT(userInput);
+
+    // Убираем "Чат-бот печатает..."
+    typingIndicator.remove();
+
+    // Добавляем реальный ответ бота с иконкой
+    chatOutput.innerHTML += `
+      <div class="message bot-message">
+        <img src="bot.png" class="message-icon" alt="Bot Icon">
+        <div class="message-text">${response}</div>
+      </div>
+    `;
+
+    // Прокрутить вниз
+    chatOutput.scrollTop = chatOutput.scrollHeight;
+
+    // Очищаем поле ввода
+    document.getElementById('user-input').value = '';
+  }
+});
+
+

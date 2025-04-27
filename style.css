@@ -2,12 +2,12 @@
 body {
   font-family: "Oswald", sans-serif;
   font-weight: 300;
-  font-style: normal;
-  background: linear-gradient(to bottom, #1b183a, #0f0d1f);
+  background: #191636;
   color: white;
   margin: 0;
   padding: 0;
   transition: background-color 0.3s ease;
+  overflow-x: hidden;
 }
 
 header {
@@ -23,10 +23,9 @@ header {
   height: auto;
 }
 
-/* Основной контент */
+/* Контейнер и карта */
 .container {
-  padding: 20px;
-  padding-bottom: 80px;
+  padding: 20px 20px 80px;
 }
 
 .map-section {
@@ -45,8 +44,8 @@ header {
 
 .map-card {
   position: relative;
-  text-align: center;
   overflow: hidden;
+  text-align: center;
   border-radius: 10px;
   height: 150px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -54,10 +53,10 @@ header {
 }
 
 .map-card a {
-  text-decoration: none;
-  color: white;
   display: block;
   height: 100%;
+  color: white;
+  text-decoration: none;
 }
 
 .map-card img {
@@ -75,8 +74,20 @@ header {
   margin: 0;
   font-size: 24px;
   font-weight: 400;
-  color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Карта на больших экранах */
+@media (min-width: 1024px) {
+  .map-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 25px;
+  }
+  .map-card:nth-child(7) {
+    grid-column: 2 / 3;
+  }
 }
 
 /* Нижняя шапка */
@@ -98,37 +109,79 @@ header {
   height: 30px;
 }
 
+/* Грид карточек */
 .nade-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 20px;
-  padding: 0 10px;
+  gap: 20px;
+  padding: 20px;
+}
+
+.nade-card {
+  overflow: hidden;
+  border-radius: 10px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.nade-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 .nade-card a {
   display: block;
+  color: white;
   text-decoration: none;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .nade-card img {
-  width: 180px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 10px 10px 10px 10px;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.nade-card h2,
+.nade-card h3 {
+  margin: 10px 0 0;
+  text-align: center;
+}
+
+.nade-card h2 {
+  font-size: 20px;
+  font-weight: 400;
 }
 
 .nade-card h3 {
-  margin: 0;
-  padding: 10px;
+  padding: 10px 0;
   font-size: 16px;
-  color: white;
-  text-align: center;
-  border-radius: 0 0 10px 10px;
 }
 
-/* Установка PWA баннера */
-#installBanner {
+/* Адаптация для ПК */
+@media (min-width: 768px) {
+  .nade-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .nade-card img {
+    height: 200px;
+  }
+  .nade-card a {
+    border-radius: 15px;
+  }
+  .nade-card h2 {
+    font-size: 18px;
+  }
+  .nade-card h3 {
+    font-size: 14px;
+  }
+}
+
+/* PWA баннер */
+#installBanner,
+#installOverlay {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -138,20 +191,19 @@ header {
   padding: 44px;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  width: 65%;
-  max-width: 400px;
   text-align: center;
-  font-family: sans-serif;
+  z-index: 9999;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.8s ease-out;
+  transition: opacity 0.5s ease;
+  width: 65%;
+  max-width: 400px;
 }
 
-#installBanner.show {
+#installBanner.show,
+#installOverlay.show {
   opacity: 1;
   pointer-events: auto;
-  animation: fadeIn 0.8s ease;
 }
 
 #installBanner p {
@@ -180,42 +232,16 @@ header {
   cursor: pointer;
 }
 
-/* Затемнённый фон под баннером */
-#installOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-  z-index: 9998;
-}
-
-#installOverlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Плавное появление */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
-/* Блокировка прокрутки */
 body.noscroll {
   overflow: hidden;
 }
 
+/* Кнопка установки */
 .custom-install-btn {
   display: inline-flex;
   align-items: center;
@@ -227,10 +253,10 @@ body.noscroll {
   font-size: 16px;
   font-weight: 500;
   border-radius: 30px;
-  cursor: pointer;
   border: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .custom-install-btn:hover {
@@ -246,4 +272,118 @@ body.noscroll {
 .button-wrapper {
   text-align: center;
   margin-top: 20px;
+}
+
+/* Стили для чат-бота */
+.chat-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+
+.chat-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.chat-box {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  height: 500px;
+  margin: 5% auto;
+  background: #1b183a;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chat-box h2 {
+  color: #ffa500;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.chat-output {
+  flex: 1;
+  background-image: url('cover.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: white;
+}
+
+.chat-input-row {
+  display: flex;
+  margin-top: 10px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  font-size: 14px;
+}
+
+.chat-input-row button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.chat-input-row button:hover {
+  background: #0056b3;
+}
+
+/* Сообщения */
+.message {
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
+}
+
+.message-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.message-text {
+  background-color: #000000;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 50%;
+}
+
+.user-message .message-text {
+  background-color: #ffad01;
+}
+
+.bot-message .message-text {
+  background-color: #163681;
 }
